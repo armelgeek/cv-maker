@@ -33,11 +33,7 @@ export const getImageUrl = (file: File | null): string => {
 
 export const downloadPDF = async (element: HTMLElement, fileName: string = 'cv.pdf'): Promise<void> => {
     try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         const { default: html2canvas } = await import('html2canvas-pro');
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         const { default: jsPDF } = await import('jspdf');
 
         const canvas = await html2canvas(element, {
