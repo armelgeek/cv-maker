@@ -179,7 +179,6 @@ const CVBuilder: React.FC = () => {
                 </div>
             </div>
 
-            {/* Modal de prévisualisation */}
             {isPreviewOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                     <div className="bg-base-100 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-auto">
