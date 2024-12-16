@@ -27,7 +27,7 @@ export function useForm<T extends Record<string, never>>(
     );
 
     const handleChange = useCallback(
-        (name: keyof T, value: never) => {
+        (name: keyof T, value: string) => {
             setFormData((prev) => ({
                 ...prev,
                 [name]: value,
