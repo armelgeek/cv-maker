@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { useCV } from '@/context/CVContext';
 import { Education } from '@/types';

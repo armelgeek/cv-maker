@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { useCV } from '@/context/CVContext';
 import FormField from '@/components/molecules/FormField';

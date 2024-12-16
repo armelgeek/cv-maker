@@ -1,4 +1,4 @@
-// src/components/templates/CVBuilder/index.tsx
+"use client";
 import React, { useRef, useState } from 'react';
 import { useCV } from '@/context/CVContext';
 import { Eye, RotateCw, Download, X, Save } from 'lucide-react';
@@ -36,13 +36,7 @@ const CVBuilder: React.FC = () => {
     const [scale, setScale] = useState(1);
 
     const {
-        personalDetails,
-        experiences,
-        educations,
-        languages,
         skills,
-        hobbies,
-        profileImage,
         theme,
         setTheme,
         resetAll,
@@ -98,7 +92,7 @@ const CVBuilder: React.FC = () => {
                             <div className="card bg-base-200">
                                 <div className="card-body">
                                     <h2 className="text-lg font-semibold">Informations Personnelles</h2>
-                                    <PersonalDetailsForm />
+                                    <PersonalDetailsForm  />
                                 </div>
                             </div>
 
@@ -112,7 +106,7 @@ const CVBuilder: React.FC = () => {
                             <div className="card bg-base-200">
                                 <div className="card-body">
                                     <h2 className="text-lg font-semibold">Formation</h2>
-                                    <EducationForm />
+                                    <EducationForm  />
                                 </div>
                             </div>
 
@@ -127,7 +121,7 @@ const CVBuilder: React.FC = () => {
                                 <div className="card bg-base-200 flex-1">
                                     <div className="card-body">
                                         <h2 className="text-lg font-semibold">Compétences</h2>
-                                        <SkillForm />
+                                        <SkillForm skills={skills} onAddSkill={(skill) => skills.push(skill)} onRemoveSkill={(index) => skills.splice(index, 1)} />
                                     </div>
                                 </div>
 

@@ -1,4 +1,4 @@
-// src/components/organisms/HobbyForm/index.tsx
+"use client";
 import React, { useState } from 'react';
 import { useCV } from '@/context/CVContext';
 import { Hobby } from '@/types';

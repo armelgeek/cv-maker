@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
