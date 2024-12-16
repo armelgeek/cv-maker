@@ -10,6 +10,8 @@ import LanguageForm from '@/components/organisms/LanguageForm';
 import SkillForm from '@/components/organisms/SkillForm';
 import HobbyForm from '@/components/organisms/HobbyForm';
 import CVPreview from '@/components/organisms/CVPreview';
+import TemplateSelector from '@/components/organisms/TemplateSelector';
+
 import { downloadPDF } from '@/lib/utils';
 import Select from '@/components/atoms/Select';
 
@@ -34,6 +36,7 @@ const CVBuilder: React.FC = () => {
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [scale, setScale] = useState(1);
+    const [isTemplateSelectorOpen, setIsTemplateSelectorOpen] = useState(false);
 
     const {
         skills,
@@ -48,7 +51,6 @@ const CVBuilder: React.FC = () => {
                 setIsDownloading(true);
                 await downloadPDF(cvPreviewRef.current);
 
-                // Animation de confettis
                 const confetti = (await import('canvas-confetti')).default;
                 confetti({
                     particleCount: 100,
@@ -65,7 +67,6 @@ const CVBuilder: React.FC = () => {
 
     const handlePreview = () => {
         setIsPreviewOpen(true);
-        // Reset scale when opening preview
         setScale(1);
     };
 
@@ -79,6 +80,13 @@ const CVBuilder: React.FC = () => {
                                 CV<span className="text-primary">Builder</span>
                             </h1>
                             <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    icon={X}
+                                    onClick={() => setIsTemplateSelectorOpen(true)}
+                                >
+                                    Templates
+                                </Button>
                                 <Button variant="outline" icon={RotateCw} onClick={resetAll}>
                                     Réinitialiser
                                 </Button>
@@ -188,13 +196,36 @@ const CVBuilder: React.FC = () => {
                                 <Button variant="primary" icon={Save} onClick={handleDownload} disabled={isDownloading}>
                                     {isDownloading ? 'Téléchargement...' : 'Télécharger'}
                                 </Button>
-                                <Button variant="ghost" icon={X} onClick={() => setIsPreviewOpen(false)}>
+                                <Button variant="primary" icon={X} onClick={() => setIsPreviewOpen(false)}>
                                     Fermer
                                 </Button>
                             </div>
                         </div>
                         <div className="p-4">
                             <CVPreview />
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isTemplateSelectorOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-base-100 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto">
+                        <div className="sticky top-0 bg-base-100 p-4 flex justify-between items-center border-b">
+                            <h2 className="text-lg font-bold">Choisir un template</h2>
+                            <Button
+                                variant="primary"
+                                icon={X}
+                                onClick={() => setIsTemplateSelectorOpen(false)}
+                            >
+                                Fermer
+                            </Button>
+                        </div>
+                        <div className="p-4">
+                            <TemplateSelector
+                                onSelect={() => {
+                                    setIsTemplateSelectorOpen(false);
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
