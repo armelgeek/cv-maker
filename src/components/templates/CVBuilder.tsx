@@ -1,7 +1,7 @@
 "use client";
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { useCV } from '@/context/CVContext';
-import { Eye, RotateCw, Download, X, Save } from 'lucide-react';
+import { Eye, History, RotateCw, Download, X, Save } from 'lucide-react';
 import Button from '@/components/atoms/Button';
 import PersonalDetailsForm from '@/components/organisms/PersonalDetailsForm';
 import ExperienceForm from '@/components/organisms/ExperienceForm';
@@ -14,6 +14,9 @@ import TemplateSelector from '@/components/organisms/TemplateSelector';
 
 import { downloadPDF } from '@/lib/utils';
 import Select from '@/components/atoms/Select';
+import {cvStorage} from "@/lib/storage";
+import VersionManager from "@/components/organisms/VersionManager";
+import ExportModal from "@/components/organisms/ExportModal";
 
 const THEMES = [
     { value: 'light', label: 'Light' },
@@ -35,8 +38,17 @@ const CVBuilder: React.FC = () => {
     const cvPreviewRef = useRef<HTMLDivElement>(null);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
-    const [scale, setScale] = useState(1);
     const [isTemplateSelectorOpen, setIsTemplateSelectorOpen] = useState(false);
+    const [isVersionManagerOpen, setIsVersionManagerOpen] = useState(false);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [scale, setScale] = useState(1);
+    const [toast, setToast] = useState<ToastState>({
+        show: false,
+        message: '',
+        type: 'success'
+    });
+
+    const cv = useCV();
 
     const {
         skills,
@@ -70,6 +82,39 @@ const CVBuilder: React.FC = () => {
         setScale(1);
     };
 
+    // Vérifier si c'est la première visite
+    useEffect(() => {
+        if (cvStorage.isFirstVisit()) {
+            setIsTemplateSelectorOpen(true);
+        }
+    }, []);
+
+    const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 3000);
+    };
+
+    const handleTemplateSelect = () => {
+        setIsTemplateSelectorOpen(false);
+        showToast('Template appliqué avec succès');
+    };
+
+    const handleVersionSave = () => {
+        const data = {
+            personalDetails: cv.personalDetails,
+            experiences: cv.experiences,
+            educations: cv.educations,
+            languages: cv.languages,
+            skills: cv.skills,
+            hobbies: cv.hobbies,
+            theme: cv.theme,
+        };
+        cvStorage.saveVersion(data);
+        showToast('Version sauvegardée avec succès');
+    };
+
     return (
         <div className="min-h-screen bg-base-100">
             <div className="container mx-auto px-4 py-8">
@@ -82,11 +127,32 @@ const CVBuilder: React.FC = () => {
                             <div className="flex gap-2">
                                 <Button
                                     variant="outline"
-                                    icon={X}
+                                    icon={Eye}
                                     onClick={() => setIsTemplateSelectorOpen(true)}
                                 >
                                     Templates
                                 </Button>
+                                    <Button
+                                        variant="outline"
+                                        icon={History}
+                                        onClick={() => setIsVersionManagerOpen(true)}
+                                    >
+                                        Versions
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        icon={Save}
+                                        onClick={handleVersionSave}
+                                    >
+                                        Sauvegarder
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        icon={Download}
+                                        onClick={() => setIsExportModalOpen(true)}
+                                    >
+                                        Exporter
+                                    </Button>
                                 <Button variant="outline" icon={RotateCw} onClick={resetAll}>
                                     Réinitialiser
                                 </Button>
@@ -230,6 +296,35 @@ const CVBuilder: React.FC = () => {
                     </div>
                 </div>
             )}
+            {isVersionManagerOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-base-100 rounded-lg max-w-4xl w-full">
+                        <div className="p-4 border-b">
+                            <h2 className="text-lg font-bold">Gérer les versions</h2>
+                        </div>
+                        <div className="p-4">
+                            <VersionManager onClose={() => setIsVersionManagerOpen(false)} />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isExportModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-base-100 rounded-lg max-w-2xl w-full">
+                        <div className="p-4 border-b">
+                            <h2 className="text-lg font-bold">Exporter le CV</h2>
+                        </div>
+                        <div className="p-4">
+                            <ExportModal
+                                previewRef={cvPreviewRef}
+                                onClose={() => setIsExportModalOpen(false)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
